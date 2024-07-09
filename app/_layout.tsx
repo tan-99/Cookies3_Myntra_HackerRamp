@@ -34,8 +34,8 @@ export default function RootLayout() {
     //     <Stack.Screen name="+not-found" />
     //   </Stack>
     // </ThemeProvider>
-    <View style={{ flex:1, alignItems:"center", justifyContent:"center"}}>
-      <Text>Welcome to my app</Text>
+    <View className="flex-1 items-center justify-center bg-white">
+      <Text className='text-red-600 text-lg font-bold'>Welcome to my app</Text>
     </View>
   );
 }
