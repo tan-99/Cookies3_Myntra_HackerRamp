@@ -34,8 +34,8 @@ export default function RootLayout() {
     //     <Stack.Screen name="+not-found" />
     //   </Stack>
     // </ThemeProvider>
-    <View style={{ flex:1, alignItems:"center", justifyContent:"center"}}>
-      <Text>Welcome to my app</Text>
+    <View className="flex-1 justify-center items-center">
+      <Text>Welcome to Myntra</Text>
     </View>
   );
 }
