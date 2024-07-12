@@ -38,7 +38,7 @@ const UserInfo = ({ route }) => {
             email: email,
             influencer: selectedValue
         });
-        navigation.navigate("Explore");
+        navigation.navigate("(tabs)");
     } catch (error) {
         console.log("Error saving details: ", error);
     }

@@ -6,9 +6,8 @@ import Home from "./Home";
 import SignIn from "./Login";
 import UserInfo from "./UserInfo";
 import Dummy from './dummy';
-import Explore from './Explore';
+import TabsLayout from './(tabs)/_layout';
 import { registerRootComponent } from "expo";
-// import { Stack } from 'expo-router';
 
 const Stack = createStackNavigator();
 
@@ -36,11 +35,7 @@ const Main = () => {
                     component={Dummy}
                     options={{ headerShown: false }}
                 ></Stack.Screen>
-                <Stack.Screen
-                    name="Explore"
-                    component={Explore}
-                    options={{ headerShown: false }}
-                ></Stack.Screen>
+                <Stack.Screen name="(tabs)" component={TabsLayout} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
     )

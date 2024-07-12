@@ -19,8 +19,8 @@ const Home = () => {
       <Image className="h-[200px] w-[300px] mb-[90px]" source={require('../assets/images/myntra-logo.png')} />
       <CustomButton imgSource={require('../assets/images/google-icon.png')} text="SIGN IN WITH GOOGLE" handlePress={handleGoogleSignIn} />
       <CustomButton imgSource={require('../assets/images/phone-icon.png')} text="SIGN IN WITH PHONE" handlePress={handlePhoneSignIn} />
-      <TouchableOpacity onPress={() => {navigation.navigate('Dummy')}}>
-        <Text>Go to Dummy</Text>
+      <TouchableOpacity onPress={() => {navigation.navigate('(tabs)')}}>
+        <Text>Go to Explore</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => {navigation.navigate('UserInfo', { })}}>
         <Text>Go to User Info</Text>

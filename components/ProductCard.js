@@ -6,7 +6,7 @@ const ProductCard = ({ item }) => {
     const navigation = useNavigation();
 
     return (
-        <View className="flex-1 rounded-lg">
+        <View className="flex-1 rounded-lg m-[8px]">
             <Image
                 source={require("../assets/images/girl1.png")}
                 className="w-full h-[290px]"
