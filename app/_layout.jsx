@@ -28,14 +28,12 @@ export default function RootLayout() {
   }
 
   return (
-    // <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-    //   <Stack>
-    //     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-    //     <Stack.Screen name="+not-found" />
-    //   </Stack>
-    // </ThemeProvider>
-    <View className="flex-1 justify-center items-center">
-      <Text>Welcome to Myntra</Text>
-    </View>
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    </Stack>
+    // <View className="flex-1 justify-center items-center">
+    //   <Text className="text-3xl">Welcome to Myntra</Text>
+    // </View>
   );
 }
