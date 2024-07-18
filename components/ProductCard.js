@@ -6,10 +6,10 @@ const ProductCard = ({ item }) => {
     const navigation = useNavigation();
 
     return (
-        <View className="flex-1 rounded-lg m-[8px]">
+        <View className="flex-1 rounded-lg">
             <Image
                 source={require("../assets/images/girl1.png")}
-                className="w-full h-[290px]"
+                className="w-[160px] h-[250px]"
                 resizeMode='contain'
             />
             <View className="flex flex-row justify-between">

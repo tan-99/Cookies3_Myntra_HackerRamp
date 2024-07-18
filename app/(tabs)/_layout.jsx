@@ -78,7 +78,7 @@ const TabsLayout = () => {
               <TabIcon
                 icon={Icons.outfit}
                 color={color}
-                name="My Outfits"
+                name="Try On"
                 focused={focused}
               />
             ),
@@ -95,6 +95,22 @@ const TabsLayout = () => {
                 icon={Icons.profile}
                 color={color}
                 name="Profile"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Contests"
+          component={ProfileScreen}
+          options={{
+            title: 'Profile',
+            headerShown: true,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={Icons.contests}
+                color={color}
+                name="Contests"
                 focused={focused}
               />
             ),

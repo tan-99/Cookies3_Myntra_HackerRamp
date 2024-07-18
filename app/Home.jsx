@@ -22,8 +22,8 @@ const Home = () => {
       <TouchableOpacity onPress={() => {navigation.navigate('(tabs)')}}>
         <Text>Go to Explore</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => {navigation.navigate('UserInfo', { })}}>
-        <Text>Go to User Info</Text>
+      <TouchableOpacity onPress={() => {navigation.navigate('UploadImage', { })}}>
+        <Text>Go to Upload Image</Text>
       </TouchableOpacity>
     </View>
   );

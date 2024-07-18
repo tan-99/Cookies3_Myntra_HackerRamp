@@ -4,10 +4,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from "./Home";
 import SignIn from "./Login";
-import UserInfo from "./UserInfo";
 import Dummy from './dummy';
 import TabsLayout from './(tabs)/_layout';
 import { registerRootComponent } from "expo";
+import UploadImage from './(tabs)/UploadImage';
+import ResultScreen from './(tabs)/Result';
+import UserInfo from './UserInfo';
 
 const Stack = createStackNavigator();
 
@@ -26,13 +28,18 @@ const Main = () => {
                     options={{ headerShown: false }}
                 ></Stack.Screen>
                 <Stack.Screen
-                    name="UserInfo"
-                    component={UserInfo}
+                    name="UploadImage"
+                    component={UploadImage}
                     options={{ headerShown: false }}
                 ></Stack.Screen>
                 <Stack.Screen
-                    name="Dummy"
-                    component={Dummy}
+                    name="Result"
+                    component={ResultScreen}
+                    options={{ headerShown: false }}
+                ></Stack.Screen>
+                <Stack.Screen
+                    name="UserInfo"
+                    component={UserInfo}
                     options={{ headerShown: false }}
                 ></Stack.Screen>
                 <Stack.Screen name="(tabs)" component={TabsLayout} options={{ headerShown: false }} />
