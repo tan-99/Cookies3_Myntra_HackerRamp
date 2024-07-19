@@ -1,5 +1,5 @@
 import { Image, Text, View } from 'react-native'
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { Tabs, Redirect } from 'expo-router'
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -8,21 +8,45 @@ import MyOutfitsScreen from './MyOutfits';
 import ProfileScreen from './profile';
 import SelectOutfitScreen from './SelectOutfit';
 import CreateOutfitScreen from './CreateOutfit';
+import VotingScreen from './VotingScreen';
+import ContestScreen from './Contests';
+// import firestore from "@react-native-firebase/firestore";
 
 import Icons from "../../constants/Icons";
 
 const Tab = createBottomTabNavigator();
 const ExploreStack = createStackNavigator();
+const ContestStack = createStackNavigator();
+
+const influencer = true;
 
 function ExploreStackScreen() {
   return (
     <ExploreStack.Navigator>
       <ExploreStack.Screen name="Explore" component={ExploreScreen} />
-      <ExploreStack.Screen name="SelectOutfit" component={SelectOutfitScreen} />
-      <ExploreStack.Screen name="CreateOutfit" component={CreateOutfitScreen} />
     </ExploreStack.Navigator>
   );
 }
+
+function UserContestStackScreen() {
+  return (
+    <ContestStack.Navigator>
+      <ContestStack.Screen name="Contests" component={ContestScreen} />
+      <ContestStack.Screen name="Voting" component={VotingScreen} />
+    </ContestStack.Navigator>
+  )
+}
+
+// function InfluencerContestStackScreen() {
+//   return (
+//     <ContestStack.Navigator>
+//       <ContestStack.Screen name="Contests" component={ContestScreen} />
+//       <ExploreStack.Screen name="SelectOutfit" component={SelectOutfitScreen} />
+//       <ExploreStack.Screen name="CreateOutfit" component={CreateOutfitScreen} />
+//       <ContestStack.Screen name="Voting" component={VotingScreen} />
+//     </ContestStack.Navigator>
+//   )
+// }
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
@@ -72,7 +96,7 @@ const TabsLayout = () => {
           name="MyOutfits"
           component={MyOutfitsScreen}
           options={{
-            title: 'My Outfits',
+            title: 'Try On',
             headerShown: true,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
@@ -95,6 +119,22 @@ const TabsLayout = () => {
                 icon={Icons.profile}
                 color={color}
                 name="Profile"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Contests"
+          component={UserContestStackScreen}
+          options={{
+            title: 'Contests',
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={Icons.contests}
+                color={color}
+                name="Contests"
                 focused={focused}
               />
             ),
