@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "203307443175",
+    "project_id": "myntra-hackerramp-710fc",
+    "storage_bucket": "myntra-hackerramp-710fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:203307443175:android:eeb57b1bc52cb8b3a89342",
+        "android_client_info": {
+          "package_name": "com.tanyahinduja2.Cookies3_Myntra"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjgkTG9ogfNt0mdiDK2BExIRhkLrzSxxo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
