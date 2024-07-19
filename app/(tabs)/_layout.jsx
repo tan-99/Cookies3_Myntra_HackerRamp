@@ -102,7 +102,7 @@ const TabsLayout = () => {
               <TabIcon
                 icon={Icons.outfit}
                 color={color}
-                name="My Outfits"
+                name="Try On"
                 focused={focused}
               />
             ),
