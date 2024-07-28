@@ -1,17 +1,19 @@
 import { Image, View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native';
+import imageMap from '../data/imageMap';
 
 const ProductCard = ({ item }) => {
     const navigation = useNavigation();
-
     return (
         <View className="flex-1 rounded-lg">
-            <Image
-                source={require("../assets/images/girl1.png")}
-                className="w-[160px] h-[250px]"
-                resizeMode='contain'
-            />
+            <View className="bg-white flex-1 items-center mx-2">
+                <Image
+                    source={imageMap[item.image]}
+                    className="h-[250px]"
+                    resizeMode='contain'
+                />
+            </View>
             <View className="flex flex-row justify-between">
                 <View className="ml-2">
                     <Text className="text-md font-bold">{item.title}</Text>

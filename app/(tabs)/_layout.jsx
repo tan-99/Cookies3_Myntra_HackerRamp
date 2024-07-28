@@ -6,8 +6,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ExploreScreen from './explore';
 import MyOutfitsScreen from './MyOutfits';
 import ProfileScreen from './profile';
+import ViewOutfitDetails from './ViewOutfitDetails';
 import SelectOutfitScreen from './SelectOutfit';
 import CreateOutfitScreen from './CreateOutfit';
+import SubmitOutfit from './SubmitOutfit';
 import VotingScreen from './VotingScreen';
 import ContestScreen from './Contests';
 // import firestore from "@react-native-firebase/firestore";
@@ -24,6 +26,9 @@ function ExploreStackScreen() {
   return (
     <ExploreStack.Navigator>
       <ExploreStack.Screen name="Explore" component={ExploreScreen} />
+      <ExploreStack.Screen name="SelectOutfit" component={SelectOutfitScreen} />
+      <ExploreStack.Screen name="View Outfit" component={ViewOutfitDetails} />
+      <ExploreStack.Screen name="Submit Outfit" component={SubmitOutfit} />
     </ExploreStack.Navigator>
   );
 }

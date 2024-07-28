@@ -1,21 +1,45 @@
 import { View, Text, FlatList, StatusBar, StyleSheet } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import ProductCard from '../../components/ProductCard';
-import products from '../../data/products';
+// import products from '../../data/products';
+import firestore from '@react-native-firebase/firestore';
 import { Dropdown } from 'react-native-element-dropdown';
 
 const Explore = () => {
 
   const dropdownItems = [
     { title: 'All', id: 0 },
-    { title: 'Top Wear', id: 1 },
-    { title: 'Bottom Wear', id: 2 },
+    { title: 'Topwear', id: 1 },
+    { title: 'Bottomwear', id: 2 },
     { title: 'Jackets', id: 3 },
     { title: 'Foot Wear', id: 4 },
   ];
 
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [headingTitle, setHeadingTitle] = useState("");
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  //fetching products from firestore...
+  const fetchProducts = async () => {
+    try {
+      const productsCollection = await firestore().collection('products').get();
+      const productsList = productsCollection.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      console.log(productsList)
+      setProducts(productsList);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const filterProducts = () => {
     if (selectedCategory === 'All') {

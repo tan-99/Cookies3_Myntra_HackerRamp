@@ -27,6 +27,7 @@ const VotingScreen = () => {
             usersCollection.forEach((doc) => {
                 const user = doc.data();
                 const userId = doc.id;
+                console.log(userId)
                 console.log(user)
                 if (!user.influencer) {
                     totalStreaks += user.streaks || 0;
