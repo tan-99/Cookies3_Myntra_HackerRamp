@@ -1,17 +1,19 @@
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
-import React from 'react'
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import ContestComp from '../../components/ContestComp';
 
 const Contests = () => {
     const navigation = useNavigation();
     const influencer = false;
+
     return (
         <View className="flex-1">
-            <TouchableOpacity className="bg-white h-64" onPress={()=>{
-                if(influencer) {
-                    navigation.navigate('SelectOutfit')
+            <TouchableOpacity className="bg-white h-64" onPress={() => {
+                if (influencer) {
+                    navigation.navigate('SelectOutfit');
                 } else {
-                    navigation.navigate('Voting')
+                    navigation.navigate('Voting');
                 }
             }}>
                 <Image
@@ -23,7 +25,9 @@ const Contests = () => {
             <View className="mt-4 p-4">
                 <Text className="text-lg text-center">The Theme of the week is...</Text>
                 <Text className="text-3xl font-serif mb-2 text-center">Summer Essentials</Text>
-                <Text className="text-sm">(Countdown)</Text>
+                <View>
+                    <ContestComp contestDocId="9NPfnKczmW7bm9Q6oTeU" size="large" />
+                </View>
             </View>
             <View className="h-60 m-4 border border-gray-300 rounded-lg">
                 <ScrollView>
@@ -76,7 +80,7 @@ const Contests = () => {
                 </ScrollView>
             </View>
         </View>
-    )
-}
+    );
+};
 
-export default Contests
+export default Contests;

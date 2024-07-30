@@ -9,27 +9,29 @@ import SubmitOutfit from './SubmitOutfit';
 const ViewOutfitDetails = ({ route, navigation }) => {
     const { outfit_name } = route.params;
     const [outfit, setOutfit] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loadingOutfit, setLoadingOutfit] = useState(true);
+    const [loadingContest, setLoadingContest] = useState(true);
     const [contest, setContest] = useState(null);
 
-    // const getContestStatus = (startDate) => {
-    //     const currentDate = new Date();
-    //     const start = startDate;
-    //     const diffTime = Math.abs(currentDate - start);
-    //     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    //     console.log(currentDate)
-    //     console.log(start)
-    //     console.log(diffTime)
-    //     console.log(diffDays)
+    const getContestStatus = (startDate) => {
+        const currentDate = new Date();
+        const start = new Date(startDate.seconds * 1000 + startDate.nanoseconds / 1000000); // Converting Firestore timestamp to JavaScript Date
+        const diffTime = Math.abs(currentDate - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    //     // if (diffDays <= 5) {
-    //     //     return 'submissions_open';
-    //     // } else if (diffDays > 5 && diffDays <= 7) {
-    //     //     return 'voting_open';
-    //     // } else {
-    //     //     return 'contest_closed';
-    //     // }
-    // };
+        console.log('Current Date:', currentDate.toISOString());
+        console.log('Start Date:', start.toISOString());
+        console.log('Difference in milliseconds:', diffTime);
+        console.log('Difference in days:', diffDays);
+
+        if (diffDays <= 5) {
+            return 'submissions_open';
+        } else if (diffDays > 1 && diffDays <= 7) {
+            return 'voting_open';
+        } else {
+            return 'contest_closed';
+        }
+    };
 
     const handlePress = () => {
         if (!contest) {
@@ -40,10 +42,32 @@ const ViewOutfitDetails = ({ route, navigation }) => {
         const status = getContestStatus(contest.startDate);
         if (status === 'submissions_open') {
             navigation.navigate('Submit Outfit', { submission: outfit });
-        } else {
+        } else if(status === 'voting_open') {
+            Alert.alert(`Voting has already begun! Be sure to join us for next week's contest.`)
+        } 
+        else {
             Alert.alert('Submission period is over.');
         }
     };
+
+    useEffect(() => {
+        const fetchContest = async () => {
+            try {
+                const contestRef = await firestore().collection('contests').doc('9NPfnKczmW7bm9Q6oTeU').get();
+                if (contestRef.exists) {
+                    setContest(contestRef.data());
+                } else {
+                    console.log('Contest not found.');
+                }
+            } catch (error) {
+                console.error('Error fetching contest:', error);
+            } finally {
+                setLoadingContest(false);
+            }
+        };
+
+        fetchContest();
+    }, [])
 
     useEffect(() => {
         const fetchOutfit = async () => {
@@ -69,26 +93,9 @@ const ViewOutfitDetails = ({ route, navigation }) => {
             } catch (error) {
                 console.error('Error fetching outfit:', error);
             } finally {
-                setLoading(false);
+                setLoadingOutfit(false);
             }
         };
-
-        const fetchContest = async () => {
-            try {
-                const contestRef = await firestore().collection('contests').doc('9NPfnKczmW7bm9Q6oTeU').get();
-                if (contestRef.exists) {
-                    setContest(contestRef.data());
-                } else {
-                    console.log('Contest not found.');
-                }
-            } catch (error) {
-                console.error('Error fetching contest:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchContest();
         fetchOutfit();
     }, [outfit_name]);
 
@@ -124,7 +131,7 @@ const ViewOutfitDetails = ({ route, navigation }) => {
         }
     };
 
-    if (loading) {
+    if (loadingOutfit || loadingContest) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
 

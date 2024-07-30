@@ -2,189 +2,222 @@ import { View, Text, FlatList, TouchableOpacity, Image, Modal, Button } from 're
 import React, { useEffect, useState } from 'react';
 import Carousel from 'react-native-reanimated-carousel';
 import firestore from "@react-native-firebase/firestore";
+import imageMap from '../../data/imageMap';
+import ContestComp from '../../components/ContestComp';
 
 const VotingScreen = () => {
 
-    const [dataa, setDataa] = useState([]);
+    const [submissions, setSubmissions] = useState([]);
     const [streaks, setStreaks] = useState(0);
+    const [votes, setVotes] = useState(0);
     const [supercoins, setSupercoins] = useState(0);
     const [userId, setUserId] = useState("");
     const [isModalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
+
+    const [timeRemaining, setTimeRemaining] = useState(null);
+    const [contestEndDate, setContestEndDate] = useState(null);
+
+    const calculateTimeRemaining = (endDate) => {
+        const now = new Date();
+        const end = new Date(endDate);
+        const difference = end - now;
+
+        if (difference <= 0) {
+            return null; // Contest has ended
+        }
+
+        const timeLeft = {
+            days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+            hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+            minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+            seconds: Math.floor((difference % (1000 * 60)) / 1000)
+        };
+        return timeLeft;
+    };
+
+    const formatTimeRemaining = (time) => {
+        if (!time) return 'Contest has ended';
+
+        return `${time.days}d ${time.hours}h ${time.minutes}m ${time.seconds}s`;
+    };
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            const usersCollection = await firestore().collection('users').get();
+        const fetchSubmissions = async () => {
+            try {
+                // Fetch the contest document
+                const contestDoc = await firestore().collection('contests').doc('9NPfnKczmW7bm9Q6oTeU').get();
 
-            let fetchedData = [];
-            let totalStreaks = 0;
-            let totalSupercoins = 0;
-
-            usersCollection.forEach((doc) => {
-                const user = doc.data();
-                const userId = doc.id;
-                console.log(userId)
-                console.log(user)
-                if (!user.influencer) {
-                    totalStreaks += user.streaks || 0;
+                if (contestDoc.exists) {
+                    const contestData = contestDoc.data();
+                    if (contestData && Array.isArray(contestData.submissions)) {
+                        console.log(submissions)
+                        setSubmissions(contestData.submissions);
+                    } else {
+                        console.log('No submissions found or submissions field is not an array.');
+                    }
+                } else {
+                    console.log('Contest document not found.');
                 }
-                if (user.supercoins) {
-                    totalSupercoins = user.supercoins || 0;
-                }
-                fetchedData.push({
-                    userId: userId,
-                    streaks: totalStreaks,
-                })
-            });
 
-            setUserId(userId);
-            setDataa(fetchedData);
-            setStreaks(totalStreaks);
-            setSupercoins(totalSupercoins);
+                // Fetch user data to get streaks and supercoins
+                const usersCollection = await firestore().collection('users').get();
+
+                let totalStreaks = 0;
+                let totalSupercoins = 0;
+
+                usersCollection.forEach((doc) => {
+                    const user = doc.data();
+                    if (!user.influencer) {
+                        totalStreaks += user.streaks || 0;
+                    }
+                    if (user.supercoins) {
+                        totalSupercoins = user.supercoins || 0;
+                    }
+                });
+
+                setStreaks(totalStreaks);
+                setSupercoins(totalSupercoins);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         };
 
-        fetchData();
+        const fetchContestEndDate = async () => {
+            try {
+                const contestDoc = await firestore().collection('contests').doc('9NPfnKczmW7bm9Q6oTeU').get();
+                if (contestDoc.exists) {
+                    const contestData = contestDoc.data();
+                    const endDate = contestData.endDate;
+                    if (endDate) {
+                        const endTimestamp = endDate.seconds * 1000 + endDate.nanoseconds / 1000000;
+                        const endDateObject = new Date(endTimestamp);
+                        setContestEndDate(endDateObject);
+                    }
+                } else {
+                    console.error('Contest document not found');
+                }
+            } catch (error) {
+                console.error('Error fetching contest end date:', error);
+            }
+        };
+
+        fetchSubmissions();
+        fetchContestEndDate();
     }, []);
 
-    const data = [
-        {
-            userId: "1",
-            username: "Kiran Hinduja",
-            outfit: [
-                {
-                    image: require('../../assets/images/uploadedImg.jpg'),
-                },
-                {
-                    image: require('../../assets/images/whiteFullSleeve.jpg'),
-                    title: "White Full Sleeves Top",
-                    price: 880,
-                    category: "Topwear",
-                },
-                {
-                    image: require('../../assets/images/BlueSkirt.jpg'),
-                    title: "Indian Blue Skirt",
-                    price: 1195,
-                    category: "Bottomwear",
-                },
-            ],
-            caption: "☀️Comfy Summer Outfit!☀️",
-            votes: 156,
-            totalPrice: 2075,
-        },
-        {
-            userId: "2",
-            username: "Shivani",
-            outfit: [
-                {
-                    image: require('../../assets/images/contestImg2.jpg'),
-                },
-                {
-                    image: require('../../assets/images/whiteFullSleeve.jpg'),
-                    title: "White Full Sleeves Top",
-                    price: 750,
-                    category: "Topwear",
-                },
-                {
-                    image: require('../../assets/images/BlueSkirt.jpg'),
-                    title: "Indian Blue Skirt",
-                    price: 1250,
-                    category: "Bottomwear",
-                },
-            ],
-            caption: "Summer in Style!🌻☀️",
-            votes: 134,
-            totalPrice: 2000,
-        },
-    ]
+    useEffect(() => {
+        if (!contestEndDate) return; // Wait until the contest end date is fetched
 
-    const renderItem = ({ item }) => (
-        <TouchableOpacity className={`mx-4 bg-blue-100 rounded-md border-2 border-gray-300 mt-3`}>
-            <View className={'flex flex-row items-center rounded-t-md bg-white py-3 px-3 shadow'}>
-                <Image
-                    source={require('../../assets/images/user.png')}
-                    className={'w-10 h-10 rounded-full mr-4'}
-                />
-                <View>
-                    <Text className={'font-bold'}>{item.username}</Text>
-                    <Text>Posted</Text>
+        const updateTimer = () => {
+            const timeLeft = calculateTimeRemaining(contestEndDate);
+            setTimeRemaining(timeLeft);
+        };
+
+        const timerInterval = setInterval(updateTimer, 1000);
+        updateTimer(); // Initialize the timer immediately
+
+        return () => clearInterval(timerInterval); // Cleanup on unmount
+    }, [contestEndDate]);
+
+
+    const renderItem = ({ item }) => {
+        const carouselData = [
+            { image: item.uploadedImg },
+            ...item.productLinks
+        ];
+        return (
+            <TouchableOpacity style={{ margin: 10, backgroundColor: '#f9f9f9', borderRadius: 10, borderWidth: 1, borderColor: '#ddd' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
+                    <Image
+                        source={require('../../assets/images/user.png')}
+                        style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }}
+                    />
+                    <View>
+                        <Text style={{ fontWeight: 'bold' }}>{item.username}</Text>
+                        <Text>Posted</Text>
+                    </View>
                 </View>
-            </View>
-            <View className={`flex flex-1 justify-center items-center`}>
-                <Carousel
-                    width={350} // Adjusted width to fit the image size
-                    height={350}
-                    autoPlay={false}
-                    data={item.outfit}
-                    scrollAnimationDuration={1000}
-                    // onSnapToItem={(index) => console.log('current index:', index)}
-                    renderItem={({ item }) => (
-                        <View className="relative">
-                            <Image
-                                source={item.image}
-                                className="w-full h-full"
-                                resizeMode="contain"
-                            />
-                            {item.title && (
-                                <View
-                                    className="absolute bottom-0 left-0 right-0 bg-white p-2 rounded-t-lg"
-                                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.85)' }}
-                                >
-                                    <View className="flex-row justify-between items-center">
-                                        <View>
-                                            <Text className="text-black font-bold">{item.title}</Text>
-                                            <Text className="text-black">{item.price} INR</Text>
+                <View className={`flex flex-1 justify-center items-center`}>
+                    <Carousel
+                        width={350}
+                        height={300}
+                        autoPlay={false}
+                        data={carouselData}
+                        scrollAnimationDuration={1000}
+                        renderItem={({ item }) => {
+                            return (
+                                <View style={{ position: 'relative' }}>
+                                    <Image
+                                        source={imageMap[item.image]}
+                                        style={{ width: '100%', height: '100%' }}
+                                        resizeMode="contain"
+                                    />
+                                    {item.title && (
+                                        <View
+                                            style={{
+                                                position: 'absolute',
+                                                bottom: 0,
+                                                left: 0,
+                                                right: 0,
+                                                backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                                                padding: 10,
+                                                borderRadius: 10,
+                                            }}
+                                        >
+                                            <View className="flex-row justify-between">
+                                                <View className="flex-col">
+                                                    <Text style={{ fontWeight: 'bold' }}>{item.title}</Text>
+                                                    <Text>{item.price} INR</Text>
+                                                </View>
+                                                <TouchableOpacity className="bg-pink-500 p-2 rounded">
+                                                    <Text className="text-white">Visit Product</Text>
+                                                </TouchableOpacity>
+                                            </View>
                                         </View>
-                                        <TouchableOpacity className="bg-pink-500 p-2 rounded">
-                                            <Text className="text-white">Visit Product</Text>
-                                        </TouchableOpacity>
-                                    </View>
+                                    )}
                                 </View>
-                            )}
-                        </View>
-
-                    )}
-                />
-            </View>
-            <View className="bg-white rounded-b-md p-2">
-                <View className="flex-col">
-                    <View className="flex-row justify-between">
-                        <Text className="text-md font-medium">
-                            {item.caption}
-                        </Text>
-                        <Text className="text-md font-medium">
-                            Total Cost: <Text className="text-gray-500">₹ {item.totalPrice}</Text>
-                        </Text>
-                    </View>
-                    <View className="flex-row justify-between">
-                        <Text className="text-md font-medium mt-3">
-                            Total Votes: <Text className="text-pink-500">{item.votes}🔺</Text>
-                        </Text>
-
-                        <TouchableOpacity className={`bg-pink-500 mt-2 p-2 rounded`} onPress={() => handleVote(userId)}>
-                            <Text className={`text-white text-center`}>Vote</Text>
-                        </TouchableOpacity>
-                    </View>
+                            );
+                        }}
+                    />
                 </View>
-            </View>
-        </TouchableOpacity>
-    );
+                <View style={{ padding: 10 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{item.caption}</Text>
+                    <Text style={{ fontSize: 16, marginVertical: 5 }}>
+                        Total Cost: <Text style={{ color: 'gray' }}>₹ {item.totalPrice}</Text>
+                    </Text>
+                    <Text style={{ fontSize: 16, marginVertical: 5 }}>
+                        Total Votes: <Text style={{ color: 'pink' }}>{votes}🔺</Text>
+                    </Text>
+                    <TouchableOpacity
+                        style={{ backgroundColor: 'pink', padding: 10, borderRadius: 5 }}
+                        onPress={() => handleVote(item.userId)}
+                    >
+                        <Text style={{ color: 'white', textAlign: 'center' }}>Vote</Text>
+                    </TouchableOpacity>
+                </View>
+            </TouchableOpacity>
+        );
+    };
 
     const handleVote = async (userId) => {
-        setStreaks(prevStreaks => prevStreaks + 1);
-        // console.log(userId)
-        // try {
-        //     const userRef = firestore().collection('users').doc(userId);
-        //     await userRef.update({
-        //         streaks: firestore.FieldValue.increment(1)
-        //     });
-        //     console.log(`Voted for user with ID: ${userId}`);
-        // } catch (error) {
-        //     console.error('Error updating streaks:', error);
-        // }
+        try {
+            // Update user streaks
+            setStreaks(prevStreaks => prevStreaks + 1);
+            setVotes(prev => prev+1);
+            // Uncomment and adjust according to your Firestore structure
+            // const userRef = firestore().collection('users').doc(userId);
+            // await userRef.update({
+            //     streaks: firestore.FieldValue.increment(1)
+            // });
+            console.log(`Voted for user with ID: ${userId}`);
+        } catch (error) {
+            console.error('Error updating streaks:', error);
+        }
     };
 
     useEffect(() => {
@@ -204,19 +237,21 @@ const VotingScreen = () => {
     };
 
     return (
-        <View className={`flex-1 p-2`}>
-            <View className="flex-row justify-between">
+        <View style={{ flex: 1, padding: 10 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                 <View>
-                    <Text>Time Left</Text>
+                    <ContestComp contestDocId="9NPfnKczmW7bm9Q6oTeU" size="small"/>
                 </View>
-                <View className="bg-white p-2.5 rounded-lg border-2 border-gray-300">
-                    <Text className="italic font-medium">Streaks: <Text className='not-italic'>👠</Text>{streaks}</Text>
+                <View style={{ backgroundColor: 'white', padding: 10, borderRadius: 10, borderWidth: 1, borderColor: '#ddd' }}>
+                    <Text style={{ fontStyle: 'italic' }}>Streaks: <Text>👠</Text>{streaks}</Text>
                 </View>
             </View>
-            <Text className={`text-center text-lg font-bold mb-1`}>Theme of the week:</Text>
-            <Text className={`italic text-center text-2xl font-bold mb-4`}>☀️Summer Essentials☀️</Text>
+            <Text style={{ textAlign: 'center', fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>Theme of the week:</Text>
+            <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>☀️Summer Essentials☀️</Text>
+
+            {/* <Text className="mt-5 px-4 font-medium">Your Submission:</Text> */}
             <FlatList
-                data={data}
+                data={submissions}
                 numColumns={1}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.userId}
@@ -232,19 +267,22 @@ const VotingScreen = () => {
                     <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, alignItems: 'center' }}>
                         <Text style={{ fontSize: 18, marginBottom: 10 }}>{modalMessage}</Text>
                         <Image
-                            source={require("../../assets/images/supercoins.png")}
-                            className="w-20 h-20 animate-bounce"
+                            source={require('../../assets/images/supercoins.png')}
+                            style={{ width: 80, height: 80 }}
                             resizeMode='contain'
                         />
                         <Text>Now you have {supercoins} supercoins in total!</Text>
-                        <TouchableOpacity className="bg-[#0B2447] rounded-full border-gray-400 border-[3px] h-[40px] w-[100px] justify-center items-center mt-3" title="Close" onPress={closeModal}>
-                            <Text className="text-white font-bold">Close</Text>
+                        <TouchableOpacity
+                            style={{ backgroundColor: '#0B2447', padding: 10, borderRadius: 5, marginTop: 10 }}
+                            onPress={closeModal}
+                        >
+                            <Text style={{ color: 'white', fontWeight: 'bold' }}>Close</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
         </View>
-    )
+    );
 }
 
 export default VotingScreen

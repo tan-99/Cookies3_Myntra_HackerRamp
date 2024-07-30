@@ -7,7 +7,7 @@ const ProductCard = ({ item }) => {
     const navigation = useNavigation();
     return (
         <View className="flex-1 rounded-lg">
-            <View className="bg-white flex-1 items-center mx-2">
+            <View className=" flex-1 items-center mx-2">
                 <Image
                     source={imageMap[item.image]}
                     className="h-[250px]"
@@ -16,7 +16,7 @@ const ProductCard = ({ item }) => {
             </View>
             <View className="flex flex-row justify-between">
                 <View className="ml-2">
-                    <Text className="text-md font-bold">{item.title}</Text>
+                    <Text className="text-sm font-bold w-20">{item.title}</Text>
                     <Text className="text-xs text-gray-500 truncate">Some details...</Text>
                     <Text className="text-md text-gray-500 truncate font-bold">₹ {item.price}</Text>
                 </View>

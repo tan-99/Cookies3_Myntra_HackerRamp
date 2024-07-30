@@ -12,24 +12,26 @@ import CreateOutfitScreen from './CreateOutfit';
 import SubmitOutfit from './SubmitOutfit';
 import VotingScreen from './VotingScreen';
 import ContestScreen from './Contests';
+import HomeScreen from './HomeScreen';
 // import firestore from "@react-native-firebase/firestore";
 
 import Icons from "../../constants/Icons";
 
 const Tab = createBottomTabNavigator();
-const ExploreStack = createStackNavigator();
+const HomeStack = createStackNavigator();
 const ContestStack = createStackNavigator();
 
 const influencer = true;
 
-function ExploreStackScreen() {
+function HomeStackScreen() {
   return (
-    <ExploreStack.Navigator>
-      <ExploreStack.Screen name="Explore" component={ExploreScreen} />
-      <ExploreStack.Screen name="SelectOutfit" component={SelectOutfitScreen} />
-      <ExploreStack.Screen name="View Outfit" component={ViewOutfitDetails} />
-      <ExploreStack.Screen name="Submit Outfit" component={SubmitOutfit} />
-    </ExploreStack.Navigator>
+    <HomeStack.Navigator>
+      {/* <HomeStack.Screen name="Home" component={HomeScreen} /> */}
+      <HomeStack.Screen name="Explore" component={ExploreScreen} />
+      <HomeStack.Screen name="SelectOutfit" component={SelectOutfitScreen} />
+      <HomeStack.Screen name="View Outfit" component={ViewOutfitDetails} />
+      <HomeStack.Screen name="Submit Outfit" component={SubmitOutfit} />
+    </HomeStack.Navigator>
   );
 }
 
@@ -82,16 +84,16 @@ const TabsLayout = () => {
         }}
       >
         <Tab.Screen
-          name="ExploreStack"
-          component={ExploreStackScreen}
+          name="HomeStack"
+          component={HomeStackScreen}
           options={{
-            title: 'Explore',
+            title: 'Home',
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 icon={Icons.exploreOutfits}
                 color={color}
-                name="Explore"
+                name="Home"
                 focused={focused}
               />
             ),
